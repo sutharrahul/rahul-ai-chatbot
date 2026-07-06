@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.chat-background {
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, #f3e8ff 0%, #f8fafc 55%, #ffffff 100%);
+}
+
+.dark .chat-background {
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, #3a2c47 0%, #1b1420 55%, #0d0a12 100%);
+}
+
+/* Slim, theme-aware scrollbar for scrollable panes (chat history, sidebar
+   suggestions). Without this, the browser's default overlay scrollbar
+   renders wide and on top of the floating toolbar (which sits close to
+   the viewport's right edge) - a thin custom thumb both looks nicer and
+   stops that overlap. */
+.styled-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+
+.dark .styled-scrollbar {
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.styled-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.styled-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.styled-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.18);
+  border-radius: 9999px;
+  /* Horizontal-only inset (no top/bottom border) so the thumb still
+     visually reaches the very top/bottom of the track when scrolled all
+     the way there - a border on all sides would leave a permanent gap at
+     both ends regardless of scroll position. */
+  background-clip: padding-box;
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+}
+
+.styled-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.32);
+}
+
+.dark .styled-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+.dark .styled-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.32);
+}
