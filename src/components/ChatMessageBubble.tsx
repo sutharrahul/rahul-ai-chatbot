@@ -6,7 +6,15 @@ import AssistantAvatar from "./AssistantAvatar";
 // answer, without exposing retrieved chunk/document internals to visitors.
 // Re-introduce `<SourcesList sources={message.sources} />` (see
 // `SourcesList.tsx`) if that's wanted again later.
-export default function ChatMessageBubble({ message }: { message: ChatMessage }) {
+export default function ChatMessageBubble({
+  message,
+  isStreaming,
+}: {
+  message: ChatMessage;
+  // True while this message is still receiving tokens (see `send` in
+  // `app/page.tsx`) - renders a blinking cursor after the text.
+  isStreaming?: boolean;
+}) {
   const isUser = message.role === "user";
 
   return (
@@ -20,6 +28,9 @@ export default function ChatMessageBubble({ message }: { message: ChatMessage })
         }`}
       >
         {message.content}
+        {isStreaming && (
+          <span className="ml-0.5 inline-block h-4 w-1.5 translate-y-0.5 animate-pulse bg-current align-middle" />
+        )}
       </div>
     </div>
   );

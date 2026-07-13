@@ -1,9 +1,41 @@
 import AssistantAvatar from "./AssistantAvatar";
 import StatusBadge from "./StatusBadge";
+import type { ChatSummary } from "@/lib/types";
+
+// Buckets a session's chats (already limited to the last 7 days by the
+// backend, see `list_recent_chats` in `backend/app/db/db_query.py`) into
+// the day-based groups the sidebar renders under.
+function groupChatsByDay(
+  chats: ChatSummary[],
+): { label: string; chats: ChatSummary[] }[] {
+  const startOfDay = (d: Date) =>
+    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const today = startOfDay(new Date());
+
+  const buckets: Record<string, ChatSummary[]> = {
+    Today: [],
+    Yesterday: [],
+    "Previous 7 Days": [],
+  };
+
+  for (const chat of chats) {
+    const diffDays = Math.round(
+      (today - startOfDay(new Date(chat.created_at))) / 86_400_000,
+    );
+    if (diffDays <= 0) buckets.Today.push(chat);
+    else if (diffDays === 1) buckets.Yesterday.push(chat);
+    else if (diffDays <= 7) buckets["Previous 7 Days"].push(chat);
+  }
+
+  return Object.entries(buckets)
+    .filter(([, list]) => list.length > 0)
+    .map(([label, list]) => ({ label, chats: list }));
+}
 
 interface SidebarProps {
-  suggestions: string[];
-  onSelect: (suggestion: string) => void;
+  chatHistory: ChatSummary[];
+  activeChatId: string | null;
+  onSelectChat: (chatId: string) => void;
   onNewChat: () => void;
   // Mobile overlay drawer visibility.
   open: boolean;
@@ -23,8 +55,9 @@ interface SidebarProps {
 }
 
 export default function Sidebar({
-  suggestions,
-  onSelect,
+  chatHistory,
+  activeChatId,
+  onSelectChat,
   onNewChat,
   open,
   onClose,
@@ -33,9 +66,9 @@ export default function Sidebar({
   online,
   disabled,
 }: SidebarProps) {
-  const handleSelect = (suggestion: string) => {
+  const handleSelectChat = (chatId: string) => {
     if (disabled) return;
-    onSelect(suggestion);
+    onSelectChat(chatId);
     onClose();
   };
 
@@ -43,6 +76,8 @@ export default function Sidebar({
     onNewChat();
     onClose();
   };
+
+  const groupedHistory = groupChatsByDay(chatHistory);
 
   return (
     <>
@@ -104,24 +139,41 @@ export default function Sidebar({
               the custom scrollbar thumb to reach the track's top/bottom. */}
           <div className="styled-scrollbar min-h-0 flex-1 overflow-y-auto">
             <div className="mt-6 px-3">
-              <p className="px-2 text-xs font-medium uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
-                Suggested
-              </p>
-              <ul className="mt-2 flex flex-col gap-0.5">
-                {suggestions.map((suggestion) => (
-                  <li key={suggestion}>
-                    <button
-                      type="button"
-                      onClick={() => handleSelect(suggestion)}
-                      disabled={disabled}
-                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white dark:disabled:hover:bg-transparent"
-                    >
-                      <ChatBubbleIcon className="h-4 w-4 shrink-0 text-neutral-400 dark:text-neutral-500" />
-                      <span className="truncate">{suggestion}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              {groupedHistory.length === 0 ? (
+                <p className="px-2 text-xs text-neutral-400 dark:text-neutral-500">
+                  No chats in the last 7 days
+                </p>
+              ) : (
+                groupedHistory.map((group) => (
+                  <div key={group.label} className="mb-4 last:mb-0">
+                    <p className="px-2 text-xs font-medium uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
+                      {group.label}
+                    </p>
+                    <ul className="mt-2 flex flex-col gap-0.5">
+                      {group.chats.map((chat) => {
+                        const active = chat.chat_id === activeChatId;
+                        return (
+                          <li key={chat.chat_id}>
+                            <button
+                              type="button"
+                              onClick={() => handleSelectChat(chat.chat_id)}
+                              disabled={disabled}
+                              className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm transition disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
+                                active
+                                  ? "bg-neutral-100 text-neutral-900 dark:bg-white/10 dark:text-white"
+                                  : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white dark:disabled:hover:bg-transparent"
+                              }`}
+                            >
+                              <ChatBubbleIcon className="h-4 w-4 shrink-0 text-neutral-400 dark:text-neutral-500" />
+                              <span className="truncate">{chat.chat_title}</span>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
