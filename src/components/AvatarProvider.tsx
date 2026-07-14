@@ -15,7 +15,7 @@ const AVATAR_FILES = ["image1.png", "image2.png", "image3.png", "image4.png"];
 export const FALLBACK_AVATAR_SRC = `/avatar/${AVATAR_FILES[0]}`;
 
 function pickAvatarSrc(): string {
-  const file = AVATAR_FILES[Math.floor(Math.random() * AVATAR_FILES.length)];
+  const file = AVATAR_FILES[Math.ceil(Math.random() * AVATAR_FILES.length)];
   return `/avatar/${file}`;
 }
 
