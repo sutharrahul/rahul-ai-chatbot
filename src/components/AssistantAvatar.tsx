@@ -20,7 +20,7 @@ export default function AssistantAvatar({ className = "h-8 w-8", size = 32 }: As
   return (
     <Image
       src={src}
-      alt="AI assistant avatar"
+      alt={`AI assistant avatar ${src}`}
       width={size}
       height={size}
       className={`shrink-0 rounded-full object-cover ${className}`}
