@@ -28,9 +28,9 @@ import { v4 as uuidv4 } from "uuid";
 
 const SUGGESTIONS = [
   "Tell me about yourself",
-  "What are Rahul's skills?",
-  "Tell me about his experience",
-  "What projects has he built?",
+  "What are your skills?",
+  "Tell me about your experience",
+  "What projects have you built?"
 ];
 
 // Identifies this browser across reloads (see `session_id` on `Chat` in
@@ -391,23 +391,8 @@ export default function ChatPage() {
           <ThemeSwitch />
         </div>
 
-        {/*
-          Relative wrapper so the floating "scroll to bottom" button (a
-          sibling of the scroll container, not a child of it) stays fixed
-          in the viewport instead of scrolling away with the content.
-        */}
         <div className="relative min-h-0 flex-1">
-          {/*
-          Scroll container: this element (not a wrapper) is the one with
-          `overflow-y-auto`, and it intentionally carries NO padding/margin
-          of its own. A custom-scrollbar element's track/thumb are laid out
-          against its own box edges - any padding here (even just
-          padding-bottom) visibly insets the thumb from the top/bottom,
-          which is exactly the "floating, inset scrollbar" bug this fixes.
-          `h-full` (rather than `min-h-0 flex-1`, now on the wrapper above)
-          fills the wrapper's flex-allocated space - all spacing lives on
-          the inner wrapper below instead.
-        */}
+         
           <div
             ref={scrollRef}
             onScroll={handleScroll}
@@ -415,7 +400,7 @@ export default function ChatPage() {
           >
             {messages.length === 0 ? (
               <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center gap-3 px-4 text-center sm:px-6">
-                <AssistantAvatar className="h-14 w-14" size={56} />
+                <AssistantAvatar className="h-36 w-36" size={150} />
                 <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
                   Hi, I'm Rahul Suthar
                 </h2>
@@ -448,7 +433,7 @@ export default function ChatPage() {
                 {isThinking &&
                   messages[messages.length - 1]?.role === "user" && (
                     <div className="flex items-center gap-2.5">
-                      <AssistantAvatar className="h-9 w-9" size={36} />
+                      <AssistantAvatar className="h-10 w-10" size={40} />
                       <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-500 dark:border-white/10 dark:bg-white/[0.06] dark:text-neutral-400">
                         Thinking...
                       </div>
@@ -490,6 +475,9 @@ export default function ChatPage() {
             </div>
           )}
           <ChatInput onSend={send} disabled={isThinking || !historyLoaded} />
+          <p className="mt-2 text-center text-xs text-neutral-400 dark:text-neutral-500">
+            This AI is trained on Rahul's portfolio and experience. Responses may not always be perfect—please verify important information.
+          </p>
         </div>
       </div>
 

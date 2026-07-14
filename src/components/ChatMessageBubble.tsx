@@ -21,7 +21,7 @@ export default function ChatMessageBubble({
 
   return (
     <div className={`flex items-center gap-2.5 ${isUser ? "justify-end" : "justify-start"}`}>
-      {!isUser && <AssistantAvatar className="h-9 w-9" size={36} />}
+      {!isUser && <AssistantAvatar className="h-10 w-10" size={48} />}
       <div
         className={`min-w-0 max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed break-words ${
           isUser

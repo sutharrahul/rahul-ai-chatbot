@@ -105,7 +105,7 @@ export default function Sidebar({
         <div className="flex h-full w-72 flex-col md:w-64">
           <div className="flex shrink-0 items-center justify-between gap-2 px-4 py-4">
             <div className="flex items-center gap-2">
-              <AssistantAvatar className="h-8 w-8" size={32} />
+              <AssistantAvatar className="h-12 w-12" size={64} />
               <span className="text-sm font-semibold tracking-tight text-neutral-900 dark:text-white">
                 Rahul Suthar
               </span>

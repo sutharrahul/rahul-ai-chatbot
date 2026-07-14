@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import ThemeProvider from "@/components/ThemeProvider";
+import { AvatarProvider } from "@/components/AvatarProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,7 +32,9 @@ export default function RootLayout({
     >
       <body className="flex h-full min-h-full flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex flex-1 overflow-hidden">{children}</div>
+          <AvatarProvider>
+            <div className="flex flex-1 overflow-hidden">{children}</div>
+          </AvatarProvider>
         </ThemeProvider>
       </body>
     </html>
